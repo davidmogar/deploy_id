@@ -38,6 +38,7 @@ resource "aws_security_group" "nginx" {
 resource "aws_instance" "nginx" {
   ami                    = var.ami[var.region]
   instance_type          = var.instance
+  key_name               = "pix4d"
   vpc_security_group_ids = [aws_security_group.nginx.id]
 }
 
