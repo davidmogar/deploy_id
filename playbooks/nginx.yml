@@ -1,0 +1,28 @@
+---
+- hosts: all
+  gather_facts: no
+  become: true
+
+  tasks:
+  - name: Update the repository cache and install nginx
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+
+  - name: Create www directory
+    file:
+      mode: '0755'
+      path: /var/www
+      state: directory
+
+  - name: Remove html directory
+    file:
+      mode: '0755'
+      path: /var/www/html
+      state: absent
+
+  - name: Clone web repository
+    git:
+      dest: /var/www/html
+      repo: "{{ website_repository }}"
