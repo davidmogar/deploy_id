@@ -12,3 +12,11 @@ variable "instance" {
 variable "region" {
   default = "eu-west-3"
 }
+
+variable "sg_egress_cidr" {
+  type = list
+}
+
+variable "sg_ingress_cidr" {
+  type = list
+}

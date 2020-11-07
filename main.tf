@@ -16,19 +16,19 @@ resource "aws_security_group" "nginx" {
   description = "Allow traffic to http and ssh ports"
 
   egress {
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.sg_egress_cidr
     from_port   = 0
     protocol    = "-1"
     to_port     = 0
   }
   ingress {
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.sg_ingress_cidr
     from_port   = 22
     protocol    = "tcp"
     to_port     = 22
   }
   ingress {
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.sg_ingress_cidr
     from_port   = 80
     protocol    = "tcp"
     to_port     = 80
