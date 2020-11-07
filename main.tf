@@ -49,6 +49,16 @@ resource "aws_eip_association" "nginx" {
 
 resource "aws_eip" "nginx" {}
 
+module "null_ansible" {
+  source = "./modules/null-ansible"
+
+  extra_arguments = ["--extra-vars 'website_repository=${var.website_repository}'"]
+  host            = aws_eip.nginx.public_ip
+  playbook        = "playbooks/nginx.yml"
+  ssh_key_path    = var.ssh_key_path
+  ssh_user        = var.ssh_user
+}
+
 output "nginx_ip" {
   description = "Public IP in front of the NGINX server"
   value       = aws_eip.nginx.public_ip

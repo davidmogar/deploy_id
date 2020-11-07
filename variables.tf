@@ -20,3 +20,11 @@ variable "sg_egress_cidr" {
 variable "sg_ingress_cidr" {
   type = list
 }
+
+variable "ssh_key_path" {
+  default = "~/.ssh/id_rsa"
+}
+
+variable "ssh_user" {}
+
+variable "website_repository" {}
