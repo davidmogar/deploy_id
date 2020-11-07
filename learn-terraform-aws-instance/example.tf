@@ -1,4 +1,12 @@
 terraform {
+  backend "remote" {
+    organization = "davidmogar"
+
+    workspaces {
+      name = "pix4d"
+    }
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
