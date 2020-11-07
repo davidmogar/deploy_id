@@ -11,7 +11,7 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_instance" "example" {
+resource "aws_instance" "nginx" {
   ami           = var.ami[var.region]
   instance_type = var.instance
 }
