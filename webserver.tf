@@ -27,18 +27,11 @@ resource "aws_instance" "webserver" {
   vpc_security_group_ids = [aws_security_group.webserver.id]
 }
 
-resource "aws_eip_association" "webserver" {
-  allocation_id = aws_eip.webserver.id
-  instance_id   = aws_instance.webserver.id
-}
-
-resource "aws_eip" "webserver" {}
-
 module "null_ansible" {
   source = "./modules/null-ansible"
 
   extra_arguments = ["--extra-vars 'website_repository=${var.website_repository}'"]
-  host            = aws_eip.webserver.public_ip
+  host            = aws_instance.webserver.public_ip
   playbook        = "ansible/playbooks/webserver.yml"
   ssh_key_path    = var.ssh_key_path
   ssh_user        = var.ssh_user
