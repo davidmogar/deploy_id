@@ -28,6 +28,7 @@ resource "aws_instance" "webserver" {
   ami                    = var.ami[var.region]
   instance_type          = var.instance
   key_name               = "deploy_it"
+  subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.webserver.id]
 }
 
