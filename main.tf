@@ -54,7 +54,7 @@ module "null_ansible" {
 
   extra_arguments = ["--extra-vars 'website_repository=${var.website_repository}'"]
   host            = aws_eip.nginx.public_ip
-  playbook        = "playbooks/nginx.yml"
+  playbook        = "ansible/playbooks/nginx.yml"
   ssh_key_path    = var.ssh_key_path
   ssh_user        = var.ssh_user
 }
