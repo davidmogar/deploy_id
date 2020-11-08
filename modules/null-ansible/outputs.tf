@@ -1,4 +1,4 @@
-output "arguments" {
+output "extra_arguments" {
   value       = var.extra_arguments
   description = "Arguments"
 }
