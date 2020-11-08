@@ -31,6 +31,11 @@ variable "ssh_key_path" {
   description = "Path to the key to use for SSH connections"
 }
 
+variable "ssh_public_key_path" {
+  default     = "~/.ssh/id_rsa"
+  description = "Path to the public key to use for SSH connections"
+}
+
 variable "ssh_user" {
   description = "User to use for SSH connections"
 }
