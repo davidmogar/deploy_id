@@ -5,6 +5,7 @@ resource "local_file" "inventory" {
   content = <<-EOF
 [all:vars]
 ansible_user=${var.ssh_user}
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 ansible_ssh_private_key_file=${var.ssh_key_path}
 
 [all]
