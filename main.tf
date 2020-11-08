@@ -8,17 +8,15 @@ resource "aws_security_group" "nginx" {
     protocol    = "-1"
     to_port     = 0
   }
-  ingress {
-    cidr_blocks = var.sg_ingress_cidr
-    from_port   = 22
-    protocol    = "tcp"
-    to_port     = 22
-  }
-  ingress {
-    cidr_blocks = var.sg_ingress_cidr
-    from_port   = 80
-    protocol    = "tcp"
-    to_port     = 80
+
+  dynamic "ingress" {
+    for_each = [22, 80]
+    content {
+      cidr_blocks = var.sg_ingress_cidr
+      from_port   = ingress.value
+      protocol    = "tcp"
+      to_port     = ingress.value
+    }
   }
 }
 
