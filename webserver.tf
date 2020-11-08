@@ -1,4 +1,10 @@
 resource "aws_security_group" "webserver" {
+  depends_on = [
+    aws_vpc.main,
+    aws_subnet.private,
+    aws_subnet.public
+  ]
+
   name        = "webserver"
   description = "Allow traffic to http and ssh ports"
 
@@ -25,6 +31,13 @@ resource "aws_security_group" "webserver" {
 }
 
 resource "aws_instance" "webserver" {
+  depends_on = [
+    aws_vpc.main,
+    aws_subnet.private,
+    aws_subnet.public,
+    aws_security_group.bastion
+  ]
+
   ami                    = var.ami[var.region]
   instance_type          = var.instance
   key_name               = "deploy_it"
