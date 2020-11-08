@@ -45,8 +45,3 @@ module "null_ansible" {
   ssh_key_path    = var.ssh_key_path
   ssh_user        = var.ssh_user
 }
-
-output "nginx_ip" {
-  description = "Public IP in front of the NGINX server"
-  value       = aws_eip.nginx.public_ip
-}
