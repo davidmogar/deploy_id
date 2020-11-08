@@ -27,7 +27,7 @@ resource "aws_security_group" "webserver" {
 resource "aws_instance" "webserver" {
   ami                    = var.ami[var.region]
   instance_type          = var.instance
-  key_name               = "pix4d"
+  key_name               = "deploy_it"
   vpc_security_group_ids = [aws_security_group.webserver.id]
 }
 
