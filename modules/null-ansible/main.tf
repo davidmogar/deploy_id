@@ -1,5 +1,6 @@
 resource "local_file" "inventory" {
-  filename = "inventory"
+  file_permission = "0440"
+  filename        = "inventory"
 
   content = <<-EOF
 [all:vars]
