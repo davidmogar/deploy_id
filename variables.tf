@@ -16,16 +16,6 @@ variable "region" {
   description = "Region in which to make the deployments"
 }
 
-variable "sg_egress_cidr" {
-  description = "CIDR to use for outgoing connections"
-  type        = list
-}
-
-variable "sg_ingress_cidr" {
-  description = "CIDR to use for incoming connections"
-  type        = list
-}
-
 variable "ssh_key_path" {
   default     = "~/.ssh/id_rsa"
   description = "Path to the key to use for SSH connections"

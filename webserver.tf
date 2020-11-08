@@ -3,7 +3,7 @@ resource "aws_security_group" "webserver" {
   description = "Allow traffic to http and ssh ports"
 
   egress {
-    cidr_blocks = var.sg_egress_cidr
+    cidr_blocks = ["0.0.0.0/0"]
     from_port   = 0
     protocol    = "-1"
     to_port     = 0
