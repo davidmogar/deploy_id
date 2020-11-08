@@ -1,27 +1,18 @@
-resource "null_resource" "inventory" {
-  provisioner "local-exec" {
-    command = "echo '[all:vars]' > hosts"
-  }
+resource "local_file" "inventory" {
+  filename = "inventory"
 
-  provisioner "local-exec" {
-    command = "echo ansible_user=${var.ssh_user} >> hosts"
-  }
+  content = <<-EOF
+[all:vars]
+ansible_user=${var.ssh_user}
+ansible_ssh_private_key_file=${var.ssh_key_path}
 
-  provisioner "local-exec" {
-    command = "echo ansible_ssh_private_key_file=${var.ssh_key_path} >> hosts"
-  }
-
-  provisioner "local-exec" {
-    command = "echo '[all]' >> hosts"
-  }
-
-  provisioner "local-exec" {
-    command = "echo ${var.host} >> hosts"
-  }
+[all]
+${var.host}
+    EOF
 }
 
 resource "null_resource" "provisioner" {
-  depends_on = [null_resource.inventory]
+  depends_on = [local_file.inventory]
 
   provisioner "remote-exec" {
     connection {
@@ -33,10 +24,6 @@ resource "null_resource" "provisioner" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i hosts ${join(" ", compact(var.extra_arguments))} ${var.playbook}"
-  }
-
-  provisioner "local-exec" {
-    command = "rm -f hosts"
+    command = "ansible-playbook -i inventory ${join(" ", compact(var.extra_arguments))} ${var.playbook}"
   }
 }
