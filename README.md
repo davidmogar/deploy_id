@@ -22,3 +22,5 @@ $ aws ec2 describe-images \
     --output text
 ami-089d839e690b09b28
 ```
+
+This exercise uses Ansible to provision the web server with NGINX and a website referenced by a git repository. Although this is not required for the exercise and it could be achieved through a `remote-exec`, it is more convenient as new things are required. It also allows to reprovision the server at any time by using `ansible-playbook`.
