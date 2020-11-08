@@ -1,6 +1,6 @@
 resource "local_file" "inventory" {
   file_permission = "0440"
-  filename        = "inventory"
+  filename        = "ansible/inventory"
 
   content = <<-EOF
 [all:vars]
@@ -26,6 +26,6 @@ resource "null_resource" "provisioner" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i inventory ${join(" ", compact(var.extra_arguments))} ${var.playbook}"
+    command = "ansible-playbook -i ansible/inventory ${join(" ", compact(var.extra_arguments))} ${var.playbook}"
   }
 }
