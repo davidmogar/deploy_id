@@ -52,7 +52,7 @@ module "null_ansible" {
   bastion_ssh_key_path = var.ssh_key_path
   extra_arguments      = ["--extra-vars 'website_repository=${var.website_repository}'"]
   host                 = aws_instance.webserver.public_ip
-  playbook             = "ansible/playbooks/webserver.yml"
+  playbook             = "ansible/playbooks/nginx.yml"
   ssh_key_path         = var.ssh_key_path
   ssh_user             = var.ssh_user
 }
