@@ -7,6 +7,7 @@ resource "aws_security_group" "webserver" {
 
   name        = "webserver"
   description = "Allow traffic to http and ssh ports"
+  vpc_id      = aws_vpc.main.id
 
   egress {
     cidr_blocks = ["0.0.0.0/0"]
