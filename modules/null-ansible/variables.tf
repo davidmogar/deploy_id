@@ -6,6 +6,14 @@ variable "host" {
   description = "Public IP of the remote host"
 }
 
+variable "bastion" {
+  description = "Public IP of the remote host"
+}
+
+variable "bastion_ssh_key_path" {
+  description = "Path to the bastion ssh key to use during the connection"
+}
+
 variable "playbook" {
   description = "Path to the playbook file"
 }

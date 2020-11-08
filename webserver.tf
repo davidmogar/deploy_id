@@ -48,9 +48,11 @@ resource "aws_instance" "webserver" {
 module "null_ansible" {
   source = "./modules/null-ansible"
 
-  extra_arguments = ["--extra-vars 'website_repository=${var.website_repository}'"]
-  host            = aws_instance.webserver.public_ip
-  playbook        = "ansible/playbooks/webserver.yml"
-  ssh_key_path    = var.ssh_key_path
-  ssh_user        = var.ssh_user
+  bastion              = aws_instance.bastion.public_ip
+  bastion_ssh_key_path = var.ssh_key_path
+  extra_arguments      = ["--extra-vars 'website_repository=${var.website_repository}'"]
+  host                 = aws_instance.webserver.public_ip
+  playbook             = "ansible/playbooks/webserver.yml"
+  ssh_key_path         = var.ssh_key_path
+  ssh_user             = var.ssh_user
 }
