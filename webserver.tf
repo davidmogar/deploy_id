@@ -9,14 +9,18 @@ resource "aws_security_group" "webserver" {
     to_port     = 0
   }
 
-  dynamic "ingress" {
-    for_each = [22, 80]
-    content {
-      cidr_blocks = var.sg_ingress_cidr
-      from_port   = ingress.value
-      protocol    = "tcp"
-      to_port     = ingress.value
-    }
+  ingress {
+    from_port       = 22
+    protocol        = "tcp"
+    to_port         = 22
+    security_groups = [aws_security_group.bastion.id]
+  }
+
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 80
+    protocol    = "tcp"
+    to_port     = 80
   }
 }
 
