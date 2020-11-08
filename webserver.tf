@@ -1,5 +1,5 @@
-resource "aws_security_group" "nginx" {
-  name        = "nginx"
+resource "aws_security_group" "webserver" {
+  name        = "webserver"
   description = "Allow traffic to http and ssh ports"
 
   egress {
@@ -20,26 +20,26 @@ resource "aws_security_group" "nginx" {
   }
 }
 
-resource "aws_instance" "nginx" {
+resource "aws_instance" "webserver" {
   ami                    = var.ami[var.region]
   instance_type          = var.instance
   key_name               = "pix4d"
-  vpc_security_group_ids = [aws_security_group.nginx.id]
+  vpc_security_group_ids = [aws_security_group.webserver.id]
 }
 
-resource "aws_eip_association" "nginx" {
-  allocation_id = aws_eip.nginx.id
-  instance_id   = aws_instance.nginx.id
+resource "aws_eip_association" "webserver" {
+  allocation_id = aws_eip.webserver.id
+  instance_id   = aws_instance.webserver.id
 }
 
-resource "aws_eip" "nginx" {}
+resource "aws_eip" "webserver" {}
 
 module "null_ansible" {
   source = "./modules/null-ansible"
 
   extra_arguments = ["--extra-vars 'website_repository=${var.website_repository}'"]
-  host            = aws_eip.nginx.public_ip
-  playbook        = "ansible/playbooks/nginx.yml"
+  host            = aws_eip.webserver.public_ip
+  playbook        = "ansible/playbooks/webserver.yml"
   ssh_key_path    = var.ssh_key_path
   ssh_user        = var.ssh_user
 }
