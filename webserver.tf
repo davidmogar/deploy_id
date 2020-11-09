@@ -46,7 +46,7 @@ resource "aws_instance" "webserver" {
   vpc_security_group_ids = [aws_security_group.webserver.id]
 }
 
-module "null_ansible" {
+module "nginx" {
   source = "./modules/null-ansible"
 
   bastion              = aws_instance.bastion.public_ip
