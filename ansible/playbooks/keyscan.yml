@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+  gather_facts: no
+  tasks:
+  - name: Get RSA of remote host
+    command: bash -c "ssh-keyscan {{ host }} | grep rsa | cut -d ' ' -f2-"
+    register: output
+
+  - name: Populate authorized_keys
+    lineinfile:
+      line: "{{ item }}"
+      path: /home/ubuntu/.ssh/authorized_keys
+    with_items:
+      - "{{ output.stdout_lines | list }}"
