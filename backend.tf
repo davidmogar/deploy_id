@@ -1,55 +1,29 @@
-resource "aws_security_group" "backend" {
+module "backend" {
   depends_on = [
-    aws_vpc.main,
-    aws_subnet.private,
-    aws_subnet.public
+    module.bastion
   ]
 
-  name        = "backend"
-  description = "Allow traffic to http and ssh ports"
-  vpc_id      = aws_vpc.main.id
+  source = "./modules/instance"
 
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 0
-    protocol    = "-1"
-    to_port     = 0
-  }
-
-  ingress {
-    from_port       = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.bastion.id]
-    to_port         = 22
-  }
-}
-
-resource "aws_instance" "backend" {
-  depends_on = [
-    aws_vpc.main,
-    aws_subnet.private,
-    aws_subnet.public,
-    aws_security_group.bastion
+  ami                   = var.ami[var.region]
+  extra_security_groups = [module.bastion.security_group]
+  ingresses = [
+    { "cidr_blocks" = [], "port" = 22, "security_groups" = [module.bastion.security_group.id] }
   ]
-
-  ami                    = var.ami[var.region]
-  instance_type          = var.instance
-  key_name               = "deploy_it"
-  subnet_id              = aws_subnet.private.id
-  vpc_security_group_ids = [aws_security_group.backend.id, aws_security_group.bastion.id]
+  instance_type  = var.instance
+  sg_description = "Allow traffic to ssh port"
+  sg_name        = "backend"
+  subnet         = aws_subnet.private
+  vpc            = aws_vpc.main
 }
 
 module "keyscan" {
-  depends_on = [
-    aws_instance.bastion
-  ]
-
   source = "./modules/ansible"
 
-  bastion              = aws_instance.bastion.public_ip
+  bastion              = module.bastion.public_ip
   bastion_ssh_key_path = var.ssh_key_path
-  extra_arguments      = ["--extra-vars 'host=${aws_instance.bastion.private_ip}'"]
-  host                 = aws_instance.backend.private_ip
+  extra_arguments      = ["--extra-vars 'host=${module.bastion.private_ip}'"]
+  host                 = module.backend.private_ip
   playbook             = "ansible/playbooks/keyscan.yml"
   ssh_key_path         = var.ssh_key_path
   ssh_user             = var.ssh_user
