@@ -38,3 +38,19 @@ resource "aws_instance" "backend" {
   subnet_id              = aws_subnet.private.id
   vpc_security_group_ids = [aws_security_group.backend.id, aws_security_group.bastion.id]
 }
+
+module "keyscan" {
+  depends_on = [
+    aws_instance.bastion
+  ]
+
+  source = "./modules/null-ansible"
+
+  bastion              = aws_instance.bastion.public_ip
+  bastion_ssh_key_path = var.ssh_key_path
+  extra_arguments      = ["--extra-vars 'host=${aws_instance.bastion.private_ip}'"]
+  host                 = aws_instance.backend.private_ip
+  playbook             = "ansible/playbooks/keyscan.yml"
+  ssh_key_path         = var.ssh_key_path
+  ssh_user             = var.ssh_user
+}
