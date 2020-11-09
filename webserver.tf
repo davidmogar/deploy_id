@@ -47,7 +47,7 @@ resource "aws_instance" "webserver" {
 }
 
 module "nginx" {
-  source = "./modules/null-ansible"
+  source = "./modules/ansible"
 
   bastion              = aws_instance.bastion.public_ip
   bastion_ssh_key_path = var.ssh_key_path

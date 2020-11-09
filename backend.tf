@@ -44,7 +44,7 @@ module "keyscan" {
     aws_instance.bastion
   ]
 
-  source = "./modules/null-ansible"
+  source = "./modules/ansible"
 
   bastion              = aws_instance.bastion.public_ip
   bastion_ssh_key_path = var.ssh_key_path
