@@ -1,6 +1,8 @@
+resource "random_uuid" "inventory_name" {}
+
 resource "local_file" "inventory" {
   file_permission = "0440"
-  filename        = "ansible/inventory"
+  filename        = "ansible/${random_uuid.inventory_name.result}"
 
   content = <<-EOF
 [all:vars]
@@ -28,6 +30,6 @@ resource "null_resource" "provisioner" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ansible/inventory ${join(" ", compact(var.extra_arguments))} ${var.playbook}"
+    command = "ansible-playbook -i ansible/${random_uuid.inventory_name.result} ${join(" ", compact(var.extra_arguments))} ${var.playbook}"
   }
 }
