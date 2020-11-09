@@ -1,8 +1,7 @@
 ---
 - hosts: all
-  gather_facts: no
   become: true
-
+  gather_facts: no
   tasks:
   - name: Update the repository cache and install nginx
     apt:
