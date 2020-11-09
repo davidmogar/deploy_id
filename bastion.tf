@@ -31,3 +31,21 @@ resource "aws_instance" "bastion" {
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.bastion.id]
 }
+
+resource "null_resource" "bastion" {
+  depends_on = [aws_instance.bastion]
+
+  provisioner "remote-exec" {
+    connection {
+      host        = aws_instance.bastion.public_ip
+      private_key = file(var.ssh_key_path)
+      type        = "ssh"
+      user        = var.ssh_user
+    }
+
+    inline = [
+      "sudo cp /etc/ssh/ssh_host_rsa_key /home/ubuntu/.ssh/id_rsa",
+      "sudo chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa"
+    ]
+  }
+}
