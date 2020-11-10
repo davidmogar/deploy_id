@@ -2,11 +2,31 @@
 - hosts: all
   become: true
   gather_facts: no
+  handlers:
+  - name: Restart nginx
+    service:
+      name: nginx
+      state: restarted
+
   tasks:
-  - name: Update the repository cache and install nginx
+  - name: Install nginx
     apt:
       name: nginx
       state: latest
+
+  - name: Delete default nginx site
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+
+  - name: Copy nginx site.conf
+    template:
+      src: site.conf.j2
+      dest: /etc/nginx/sites-enabled/{{ domain }}
+      owner: root
+      group: root
+      mode: '0644'
+    notify: Restart nginx
 
   - name: Create www directory
     file:
@@ -14,13 +34,13 @@
       path: /var/www
       state: directory
 
-  - name: Remove html directory
+  - name: Remove directory
     file:
       mode: '0755'
-      path: /var/www/html
+      path: /var/www/{{ domain }}
       state: absent
 
   - name: Clone web repository
     git:
-      dest: /var/www/html
+      dest: /var/www/{{ domain }}
       repo: "{{ website_repository }}"
