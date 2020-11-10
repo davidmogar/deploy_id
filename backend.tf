@@ -24,7 +24,7 @@ module "keyscan" {
   bastion_ssh_key_path = var.ssh_key_path
   extra_arguments      = ["--extra-vars 'host=${module.bastion.private_ip}'"]
   host                 = module.backend.private_ip
-  playbook             = "ansible/playbooks/keyscan.yml"
+  playbook             = "ansible/playbooks/keyscan/keyscan.yml"
   ssh_key_path         = var.ssh_key_path
   ssh_user             = var.ssh_user
 }

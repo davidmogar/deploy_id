@@ -19,7 +19,7 @@
   - name: Get Terraform data
     block:
     - name: Get Terraform output in JSON format
-      command: "chdir=../.. terraform output -json"
+      command: "chdir=../../.. terraform output -json"
       register: output
 
     - name: Store output as a JSON object
