@@ -1,0 +1,105 @@
+---
+
+- hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+  - name: Ensure dependencies are installed
+    pacman:
+      name: [ "nmap", "python-netaddr" ]
+      state: present
+
+  - name: fsdfsd
+    command: "pwd"
+    register: "pwd"
+
+  - debug:
+      msg: "{{ pwd.stdout }}"
+
+  - name: Get Terraform data
+    block:
+    - name: Get Terraform output in JSON format
+      command: "chdir=../.. terraform output -json"
+      register: output
+
+    - name: Store output as a JSON object
+      set_fact:
+        terraform: "{{ output.stdout | from_json }}"
+
+  - name: Validate IP addresses
+    block:
+    - name: The backend server must not have a public ip
+      fail:
+        msg: "The backend server has a public IP"
+      when: terraform['backend_public_ip']['value'] != ""
+
+    - name: The backend server must be in the private subnet
+      fail:
+        msg: "The backend server in not in the private subnet"
+      when: terraform['backend_private_ip']['value'] | ipaddr('10.0.2.0/28') | ipaddr('bool') == false
+
+    - name: The webserver must be in the public subnet
+      fail:
+        msg: "The webserver in not in the public subnet"
+      when: terraform['webserver_private_ip']['value'] | ipaddr('10.0.1.0/28') | ipaddr('bool') == false
+
+    - name: The webserver must have a public ip
+      fail:
+        msg: "The webserver doesn't have a public IP"
+      when: terraform['webserver_public_ip']['value'] == ""
+
+    - name: The bastion must have a public ip
+      fail:
+        msg: "The backend server doesn't have a public IP"
+      when: terraform['bastion_public_ip']['value'] == ""
+
+    - name: The bastion must be in the public subnet
+      fail:
+        msg: "The bastion in not in the public subnet"
+      when: terraform['bastion_private_ip']['value'] | ipaddr('10.0.1.0/28') | ipaddr('bool') == false
+
+  - name: Validate bastion ports
+    block:
+    - name: Get open ports in the bastion.
+      become: true
+      shell: "nmap -PnsS {{ terraform['bastion_public_ip']['value'] }} | grep open | awk '{print $1}' | sort -u"
+      register: bastion_open_ports
+
+    - name: Remove bastion expected open ports
+      set_fact:
+        bastion_open_ports: "{{ bastion_open_ports.stdout_lines | difference(['22/tcp']) }}"
+
+    - name: The bastion must only listen in the port 22
+      fail:
+        msg: "The bastion has more open ports than the ones expected: {{ bastion_open_ports }}"
+      when: bastion_open_ports | length != 0
+
+    - name: The bastion must listen in the port 22 through its public IP
+      wait_for:
+        host: "{{ terraform['bastion_public_ip']['value'] }}"
+        port: "{{ item }}"
+        state: started
+      ignore_errors: yes
+      with_items:
+        - 22
+
+  - name: Validate webserver ports
+    block:
+    - name: Get open ports in the webserver.
+      become: true
+      shell: "nmap -PnsS {{ terraform['webserver_public_ip']['value'] }} | grep open | awk '{print $1}' | sort -u"
+      register: webserver_open_ports
+
+    - name: Remove webserver expected open ports
+      set_fact:
+        webserver_open_ports: "{{ webserver_open_ports.stdout_lines | difference(['80/tcp']) }}"
+
+    - name: The webserver must only listen in the port 80 through its public IP
+      fail:
+        msg: "The webserver has more open ports than the ones expected"
+      when: webserver_open_ports | length != 0
+
+    - name: The webserver must listen in the port 80
+      uri:
+        status_code: 200
+        url: "http://{{ terraform['webserver_public_ip']['value'] }}"
