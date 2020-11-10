@@ -64,7 +64,7 @@ module "nginx" {
 
   bastion              = module.bastion.public_ip
   bastion_ssh_key_path = var.ssh_key_path
-  extra_arguments      = ["--extra-vars 'website_repository=${var.website_repository}'"]
+  extra_arguments      = ["--extra-vars 'domain=${acme_certificate.webserver.certificate_domain} website_repository=${var.website_repository}'"]
   host                 = module.webserver.private_ip
   playbook             = "ansible/playbooks/nginx/nginx.yml"
   ssh_key_path         = var.ssh_key_path
