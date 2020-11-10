@@ -6,6 +6,18 @@ variable "ami" {
   type        = map
 }
 
+variable "cloudflare_zone_id" {
+  description = "The DNS zone ID to add the record to"
+}
+
+variable "hostname" {
+  default = {
+    "subdomain": "pix4d"
+    "domain": "davidmogar.com"
+  }
+  description = "Hostname components"
+}
+
 variable "instance" {
   default     = "t2.micro"
   description = "Intance type to use"
