@@ -18,6 +18,11 @@ output "bastion_public_ip" {
   value       = module.bastion.public_ip
 }
 
+output "webserver_hostname" {
+  description = "Hostname in front of the webserver"
+  value       = "${var.hostname.subdomain}.${var.hostname.domain}"
+}
+
 output "webserver_private_ip" {
   description = "Private IP in front of the webserver"
   value       = module.webserver.private_ip
