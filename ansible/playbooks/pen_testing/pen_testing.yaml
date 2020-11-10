@@ -92,14 +92,21 @@
 
     - name: Remove webserver expected open ports
       set_fact:
-        webserver_open_ports: "{{ webserver_open_ports.stdout_lines | difference(['80/tcp']) }}"
+        webserver_open_ports: "{{ webserver_open_ports.stdout_lines | difference(['80/tcp', '443/tcp']) }}"
 
-    - name: The webserver must only listen in the port 80 through its public IP
+    - name: The webserver must only listen in the ports 80 and 443 through its public IP
       fail:
         msg: "The webserver has more open ports than the ones expected"
       when: webserver_open_ports | length != 0
 
-    - name: The webserver must listen in the port 80
+    - name: The webserver must listen in the port 443 and have a valid certificate
       uri:
         status_code: 200
-        url: "http://{{ terraform['webserver_public_ip']['value'] }}"
+        url: https://{{ terraform['webserver_hostname']['value'] }}
+        validate_certs: yes
+
+    - name: The webserver must redirect http traffic to port 443
+      uri:
+        follow_redirects: no
+        status_code: 302
+        url: http://{{ terraform['webserver_public_ip']['value'] }}
