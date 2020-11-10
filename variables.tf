@@ -12,8 +12,8 @@ variable "cloudflare_zone_id" {
 
 variable "hostname" {
   default = {
-    "subdomain": "pix4d"
-    "domain": "davidmogar.com"
+    "subdomain" : "pix4d"
+    "domain" : "davidmogar.com"
   }
   description = "Hostname components"
 }
