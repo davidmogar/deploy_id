@@ -66,3 +66,7 @@ $ ssh -J ubuntu@<bastion_ip> ubuntu@<backend_ip>
 #### Pen testing
 
 To validate that everything is as it should be, I included an Ansible playbook that checks the different IPs and the services listening behind them.
+
+### Exercise 5
+
+Let's Encrypt blacklists `compute-1.amazonaws.com` and doesn't allow to usage IPs. Given that I own a domain, I took the chance to move it to Cloudflare and use Terraform's Cloudflare provider to generate an A record in my domain.
