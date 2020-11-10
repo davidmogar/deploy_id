@@ -22,7 +22,7 @@ resource "tls_cert_request" "webserver" {
 
   subject {
     common_name  = "${var.hostname.subdomain}.${var.hostname.domain}"
-    organization = "${var.hostname.domain}"
+    organization = var.hostname.domain
   }
 }
 
