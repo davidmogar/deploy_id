@@ -1,34 +1,28 @@
-resource "tls_private_key" "webserver" {
-  algorithm = "RSA"
-}
+resource "aws_acm_certificate" "cert" {
+  domain_name       = "pix4d.davidmogar.com"
+  validation_method = "DNS"
 
-resource "acme_registration" "webserver" {
-  account_key_pem = tls_private_key.webserver.private_key_pem
-  email_address   = "null@${var.hostname.domain}"
-}
-
-resource "acme_certificate" "webserver" {
-  account_key_pem = acme_registration.webserver.account_key_pem
-  common_name     = "${var.hostname.subdomain}.${var.hostname.domain}"
-
-  dns_challenge {
-    provider = "cloudflare"
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
-resource "tls_cert_request" "webserver" {
-  key_algorithm   = tls_private_key.webserver.algorithm
-  private_key_pem = tls_private_key.webserver.private_key_pem
-
-  subject {
-    common_name  = "${var.hostname.subdomain}.${var.hostname.domain}"
-    organization = var.hostname.domain
+resource "cloudflare_record" "cert" {
+  for_each = {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+      record_name  = dvo.resource_record_name
+      record_type  = dvo.resource_record_type
+      record_value = replace(dvo.resource_record_value, "/[.]$/", "")
+    }
   }
+  name    = each.value.record_name
+  proxied = false
+  type    = each.value.record_type
+  value   = each.value.record_value
+  zone_id = var.cloudflare_zone_id
 }
 
-resource "cloudflare_origin_ca_certificate" "webserver" {
-  csr                = tls_cert_request.webserver.cert_request_pem
-  hostnames          = ["${var.hostname.subdomain}.${var.hostname.domain}"]
-  request_type       = "origin-rsa"
-  requested_validity = 365
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [for _, cert in cloudflare_record.cert : cert.hostname]
 }
