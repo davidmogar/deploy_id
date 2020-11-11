@@ -70,3 +70,12 @@ To validate that everything is as it should be, I included an Ansible playbook t
 ### Exercise 5
 
 Let's Encrypt blacklists `compute-1.amazonaws.com` and doesn't allow to usage IPs. Given that I own a domain, I took the chance to move it to Cloudflare and use Terraform's Cloudflare provider to generate an A record in my domain.
+
+### Exercise 6
+
+As an extension to the previous exercises, I modified the `instance` module to support defining load balanced instances. This change is used by the webserver which now:
+
+* Uses an `autoscaling_group` to scale the deployment based on memory.
+* Uses a Packer image with NGINX preinstalled.
+* Defines user data to provision the instances with the website.
+* Does SSL termination in the load balancer, with a certificate generated using AWS Certificate Manager.
