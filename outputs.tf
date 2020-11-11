@@ -18,16 +18,12 @@ output "bastion_public_ip" {
   value       = module.bastion.public_ip
 }
 
-output "webserver_hostname" {
-  description = "Hostname in front of the webserver"
-  value       = "${var.hostname.subdomain}.${var.hostname.domain}"
+output "website_address" {
+  description = "The address to the deployed website"
+  value       = "https://${var.hostname.subdomain}.${var.hostname.domain}"
 }
 
-output "webserver_private_ip" {
-  description = "Private IP in front of the webserver"
-  value       = module.webserver.private_ip
-}
-output "webserver_public_ip" {
-  description = "Public IP in front of the webserver"
-  value       = module.webserver.public_ip
+output "webserver_dns_name" {
+  description = "DNS name of the webserver"
+  value       = module.webserver.loadbalancer_dns_name
 }
