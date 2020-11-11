@@ -1,6 +1,6 @@
 {
   "variables": {
-    "region": "eu-west-3"
+    "region": "eu-west-2"
   },
   "builders": [
     {
