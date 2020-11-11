@@ -1,7 +1,4 @@
 variable "ami" {
-  default = {
-    "eu-west-3" = "ami-089d839e690b09b28"
-  }
   description = "Map containing the image id for each region"
   type        = map
 }
@@ -24,7 +21,6 @@ variable "instance" {
 }
 
 variable "region" {
-  default     = "eu-west-3"
   description = "Region in which to make the deployments"
 }
 
