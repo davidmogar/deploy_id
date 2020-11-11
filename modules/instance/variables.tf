@@ -13,7 +13,7 @@ variable "extra_security_groups" {
 
 variable "ingresses" {
   description = "Ingress values"
-  type        = list
+  type        = any
 }
 
 variable "instance_type" {

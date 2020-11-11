@@ -5,6 +5,10 @@ module "webserver" {
   description = "Allow traffic to http and ssh ports"
   ingresses = [
     {
+      "port"            = 22,
+      "security_groups" = [module.bastion.security_group.id]
+    },
+    {
       "cidr_blocks" = ["0.0.0.0/0"],
       "port"        = 80
     }

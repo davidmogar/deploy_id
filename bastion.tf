@@ -3,7 +3,7 @@ module "bastion" {
 
   ami = var.ami["ubuntu"]
   ingresses = [
-    { "cidr_blocks" = ["0.0.0.0/0"], "port" = 22, "security_groups" = [] }
+    { "cidr_blocks" = ["0.0.0.0/0"], "port" = 22 }
   ]
   instance_type = var.instance
   description   = "Allow traffic to ssh port"

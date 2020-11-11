@@ -8,7 +8,7 @@ module "backend" {
   ami                   = var.ami["ubuntu"]
   extra_security_groups = [module.bastion.security_group]
   ingresses = [
-    { "cidr_blocks" = [], "port" = 22, "security_groups" = [module.bastion.security_group.id] }
+    { "port" = 22, "security_groups" = [module.bastion.security_group.id] }
   ]
   instance_type = var.instance
   description   = "Allow traffic to ssh port"
