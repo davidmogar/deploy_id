@@ -5,11 +5,11 @@ module "bastion" {
   ingresses = [
     { "cidr_blocks" = ["0.0.0.0/0"], "port" = 22, "security_groups" = [] }
   ]
-  instance_type  = var.instance
-  description = "Allow traffic to ssh port"
-  name        = "bastion"
-  subnet         = aws_subnet.public
-  vpc            = aws_vpc.main
+  instance_type = var.instance
+  description   = "Allow traffic to ssh port"
+  name          = "bastion"
+  subnet        = aws_subnet.public
+  vpc           = aws_vpc.main
 }
 
 resource "null_resource" "bastion" {
