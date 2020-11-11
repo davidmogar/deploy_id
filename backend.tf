@@ -11,8 +11,8 @@ module "backend" {
     { "cidr_blocks" = [], "port" = 22, "security_groups" = [module.bastion.security_group.id] }
   ]
   instance_type  = var.instance
-  sg_description = "Allow traffic to ssh port"
-  sg_name        = "backend"
+  description = "Allow traffic to ssh port"
+  name        = "backend"
   subnet         = aws_subnet.private
   vpc            = aws_vpc.main
 }

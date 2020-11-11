@@ -6,8 +6,8 @@ module "bastion" {
     { "cidr_blocks" = ["0.0.0.0/0"], "port" = 22, "security_groups" = [] }
   ]
   instance_type  = var.instance
-  sg_description = "Allow traffic to ssh port"
-  sg_name        = "bastion"
+  description = "Allow traffic to ssh port"
+  name        = "bastion"
   subnet         = aws_subnet.public
   vpc            = aws_vpc.main
 }

@@ -8,8 +8,8 @@ module "webserver" {
     { "cidr_blocks" = ["0.0.0.0/0"], "port" = 443, "security_groups" = [] }
   ]
   instance_type  = var.instance
-  sg_description = "Allow traffic to http and ssh ports"
-  sg_name        = "webserver"
+  description = "Allow traffic to http and ssh ports"
+  name        = "webserver"
   subnet         = aws_subnet.public
   vpc            = aws_vpc.main
 }
