@@ -57,17 +57,17 @@ resource "aws_route_table_association" "main" {
   subnet_id      = aws_subnet.public.id
 }
 
-resource "aws_eip" "main" {
+resource "aws_eip" "nat" {
   vpc = true
 }
 
 resource "aws_nat_gateway" "nat" {
   depends_on = [
     aws_subnet.public,
-    aws_eip.main
+    aws_eip.nat
   ]
 
-  allocation_id = aws_eip.main.id
+  allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public.id
 }
 
