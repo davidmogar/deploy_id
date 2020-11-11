@@ -1,15 +1,31 @@
 module "webserver" {
   source = "./modules/instance"
 
-  ami = var.ami[var.region]
-  ingresses = [
-    { "cidr_blocks" = [], "port" = 22, "security_groups" = [module.bastion.security_group.id] },
-    { "cidr_blocks" = ["0.0.0.0/0"], "port" = 80, "security_groups" = [] },
-    { "cidr_blocks" = ["0.0.0.0/0"], "port" = 443, "security_groups" = [] }
-  ]
-  instance_type  = var.instance
+  ami         = var.ami["nginx"]
   description = "Allow traffic to http and ssh ports"
-  name        = "webserver"
-  subnet         = aws_subnet.public
-  vpc            = aws_vpc.main
+  ingresses = [
+    {
+      "cidr_blocks" = ["0.0.0.0/0"],
+      "port"        = 80
+    }
+  ]
+  instance_type = var.instance
+  loadbalancer = {
+    "availability_zones" = ["${var.region}a", "${var.region}b"]
+    "desired_capacity"   = 1
+    "listeners" = [
+      {
+        "instance_port"     = 80,
+        "instance_protocol" = "http",
+        "lb_port"            = 443,
+        "lb_protocol"        = "https",
+        "ssl_certificate_id" = aws_acm_certificate_validation.cert.certificate_arn
+      }
+    ]
+    "max_size" = 3
+    "min_size" = 1
+  }
+  name   = "webserver"
+  subnet = aws_subnet.public
+  vpc = aws_vpc.main
 }
