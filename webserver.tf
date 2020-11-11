@@ -27,5 +27,10 @@ module "webserver" {
   }
   name   = "webserver"
   subnet = aws_subnet.public
+  user_data = base64encode(templatefile("templates/webserver_user_data.tpl",
+    {
+      website_repository = var.website_repository
+    }
+  ))
   vpc = aws_vpc.main
 }
