@@ -38,16 +38,6 @@
         msg: "The backend server in not in the private subnet"
       when: terraform['backend_private_ip']['value'] | ipaddr('10.0.2.0/28') | ipaddr('bool') == false
 
-    - name: The webserver must be in the public subnet
-      fail:
-        msg: "The webserver in not in the public subnet"
-      when: terraform['webserver_private_ip']['value'] | ipaddr('10.0.1.0/28') | ipaddr('bool') == false
-
-    - name: The webserver must have a public ip
-      fail:
-        msg: "The webserver doesn't have a public IP"
-      when: terraform['webserver_public_ip']['value'] == ""
-
     - name: The bastion must have a public ip
       fail:
         msg: "The backend server doesn't have a public IP"
@@ -83,18 +73,18 @@
       with_items:
         - 22
 
-  - name: Validate webserver ports
+  - name: Validate loadbalancer ports
     block:
     - name: Get open ports in the webserver.
       become: true
-      shell: "nmap -PnsS {{ terraform['webserver_public_ip']['value'] }} | grep open | awk '{print $1}' | sort -u"
+      shell: "nmap -PnsS {{ terraform['webserver_dns_name']['value'] }} | grep open | awk '{print $1}' | sort -u"
       register: webserver_open_ports
 
     - name: Remove webserver expected open ports
       set_fact:
-        webserver_open_ports: "{{ webserver_open_ports.stdout_lines | difference(['80/tcp', '443/tcp']) }}"
+        webserver_open_ports: "{{ webserver_open_ports.stdout_lines | difference(['443/tcp']) }}"
 
-    - name: The webserver must only listen in the ports 80 and 443 through its public IP
+    - name: The webserver must only listen in the port 443
       fail:
         msg: "The webserver has more open ports than the ones expected"
       when: webserver_open_ports | length != 0
@@ -102,11 +92,5 @@
     - name: The webserver must listen in the port 443 and have a valid certificate
       uri:
         status_code: 200
-        url: https://{{ terraform['webserver_hostname']['value'] }}
+        url: "{{ terraform['website_address']['value'] }}"
         validate_certs: yes
-
-    - name: The webserver must redirect http traffic to port 443
-      uri:
-        follow_redirects: no
-        status_code: 302
-        url: http://{{ terraform['webserver_public_ip']['value'] }}
