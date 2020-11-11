@@ -5,7 +5,7 @@ module "backend" {
 
   source = "./modules/instance"
 
-  ami                   = var.ami[var.region]
+  ami                   = var.ami["ubuntu"]
   extra_security_groups = [module.bastion.security_group]
   ingresses = [
     { "cidr_blocks" = [], "port" = 22, "security_groups" = [module.bastion.security_group.id] }

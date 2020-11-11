@@ -1,7 +1,7 @@
 module "bastion" {
   source = "./modules/instance"
 
-  ami = var.ami[var.region]
+  ami = var.ami["ubuntu"]
   ingresses = [
     { "cidr_blocks" = ["0.0.0.0/0"], "port" = 22, "security_groups" = [] }
   ]
